@@ -31,13 +31,13 @@ module.exports.register = async(req, res)=>{
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
         const user = new userModel({
-            name: req.body.name,
-            email: req.body.email,
+            name: req.body.name.toLowerCase(),
+            email: req.body.email.toLowerCase(),
             password: hashedPassword,
-            about: req.body.about,
-            adress: req.body.adress,
+            about: req.body.about.toLowerCase(),
+            adress: req.body.adress.toLowerCase(),
             website: req.body.website,
-            role: req.body.role
+            role: req.body.role.toLowerCase()
         })
 
         if(req.file){

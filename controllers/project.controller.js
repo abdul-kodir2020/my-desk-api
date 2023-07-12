@@ -21,7 +21,6 @@ module.exports.getOneProject = async (req, res) =>{
 }
 
 module.exports.addProject = async (req, res) =>{
-    console.log(req)
     const {error} = schemaAdd.validate(req.body)
     if(error) return res.status(400).json(error.details[0].message)
 
@@ -29,9 +28,9 @@ module.exports.addProject = async (req, res) =>{
     if(project) return res.status(400).json("Ce projet existe déjà")
 
     const newProject = new projectModel({
-        type: req.body.type,
-        name: req.body.name,
-        description: req.body.description,
+        type: req.body.type.toLowerCase(),
+        name: req.body.name.toLowerCase(),
+        description: req.body.description.toLowerCase(),
         over: false,
         userId: req.userId,
     })
@@ -71,7 +70,7 @@ module.exports.deleteProject = async(req, res) =>{
     if(!project) return res.status(400).json('Aucun projet de cet id')
 
     try {
-        projet.deleteOne()
+        project.deleteOne()
         res.json({id})
     } catch (error) {
         res.status(400).json({error})

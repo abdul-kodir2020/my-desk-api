@@ -3,7 +3,7 @@ const verifyToken = require('../middlewares/auth.middleware')
 
 const router = require('express').Router()
 
-router.get('/',verifyToken, getTasks)
+router.get('/all/:projectId',verifyToken, getTasks)
 router.get('/:id', verifyToken,getOneTask)
 router.delete('/:id',verifyToken, deleteTask)
 router.put('/:id', verifyToken,updateTask)

@@ -8,7 +8,7 @@ const router = require('express').Router()
 
 router.post('/register', upload.single('image'), register)
 router.post('/login',login)
-router.post('/',verifyToken,getUser)
+router.get('/',verifyToken,getUser)
 router.post('/password-forgot',passwordForgot)
 
 module.exports = router

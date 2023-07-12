@@ -13,7 +13,7 @@ const schemaAdd = joi.object(
 )
 
 module.exports.getTasks = async(req, res) =>{
-    const tasks = await taskModel.find({projectId: req.body.projectId});
+    const tasks = await taskModel.find({projectId: req.params.projectId});
     res.json({tasks});
 }
 
@@ -32,11 +32,11 @@ module.exports.addTask = async (req, res) =>{
         if(task) return res.status(400).json("Cette tâche existe déjà")
 
         const newTask = new taskModel({
-            name: req.body.name,
-            description: req.body.description,
+            name: req.body.name.toLowerCase(),
+            description: req.body.description.toLowerCase(),
             critical: req.body.critical || false,
             over: false,
-            projectId: projectId
+            projectId: req.body.projectId
         })
 
         const taskCreated = await newTask.save()
