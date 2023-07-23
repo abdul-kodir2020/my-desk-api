@@ -10,13 +10,14 @@ const schemaAdd = joi.object(
 )
 
 module.exports.getProjects = async(req, res) =>{
-    const projects = await projectModel.find({userId: req.userId});
+    const projects = await projectModel.find({userId: req.userId}).sort({createdAt: -1});
     res.json({projects});
 }
 
 module.exports.getOneProject = async (req, res) =>{
     const project = await projectModel.findById(req.params.id)
     if(!project) return res.status(400).json('Aucune projet de cet id')
+
     res.json({project})
 }
 
@@ -32,7 +33,7 @@ module.exports.addProject = async (req, res) =>{
         name: req.body.name.toLowerCase(),
         description: req.body.description.toLowerCase(),
         over: false,
-        userId: req.userId,
+        userId: req.userId
     })
 
     try {
@@ -48,19 +49,13 @@ module.exports.updateProject = async(req, res)=>{
         const project = await projectModel.findById(req.params.id)
         if(!project) return res.status(400).json('Aucun projet de cet id')
 
-        const champs = {}
-        if(req.body.type) champs.type = req.body.type
-        if(req.body.name) champs.name = req.body.name
-        if(req.body.description) champs.description = req.body.description
-        if(req.body.over) champs.over = req.body.over
-
-        //const updatedProject = projectModel.updateOne({_id: req.params.id}, {$set: champs})
-        res.json("eee")
+        await projectModel.findByIdAndUpdate(project, req.body)
+        const updatedProject = await projectModel.findById(req.params.id)
+        res.json({updatedProject})
     } catch (error) {
         res.status(400).json({error})
     }
     
-
 }
 
 
@@ -71,7 +66,9 @@ module.exports.deleteProject = async(req, res) =>{
 
     try {
         project.deleteOne()
-        res.json({id})
+        const projects = await projectModel.find({userId: req.userId});
+
+        res.json({id, projects})
     } catch (error) {
         res.status(400).json({error})
     }

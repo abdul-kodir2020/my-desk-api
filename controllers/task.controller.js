@@ -28,9 +28,6 @@ module.exports.addTask = async (req, res) =>{
         const {error} = schemaAdd.validate(req.body)
         if(error) return res.status(400).json(error.details[0].message)
 
-        const task = await taskModel.findOne({name : req.body.name})
-        if(task) return res.status(400).json("Cette tâche existe déjà")
-
         const newTask = new taskModel({
             name: req.body.name.toLowerCase(),
             description: req.body.description.toLowerCase(),
@@ -52,11 +49,21 @@ module.exports.updateTask = async(req, res)=>{
     if(!task) return res.status(400).json('Aucune tâche de cet id')
 
     try {
-        taskUpdated = await taskModel.findByIdAndUpdate(task, req.body)
-        res.json({taskUpdated})
+        const taskUpdated = await taskModel.findByIdAndUpdate(task, req.body)
+        const tasks = await taskModel.find({projectId: task.projectId});
+        const tasksOver = tasks.filter((task)=>task.over === true)
+        
+        if (tasks.length === tasksOver.length) {
+            await projectModel.findByIdAndUpdate(task.projectId, {over: true})
+        }else{
+            await projectModel.findByIdAndUpdate(task.projectId, {over: false})
+        }
+
+        const project = await projectModel.findById(task.projectId)
+
+        res.json({taskUpdated, project})
     } catch (error) {
         res.status(400).json({error})
-        
     }
 }
 
@@ -67,6 +74,7 @@ module.exports.deleteTask = async(req, res) =>{
 
     try {
         task.deleteOne()
+        
         res.json({id})
     } catch (error) {
         res.status(400).json({error})
