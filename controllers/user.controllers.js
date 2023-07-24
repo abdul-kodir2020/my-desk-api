@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const joi = require('joi')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const fs = require('fs')
 
 
 const schemaUser = joi.object(
@@ -125,4 +126,29 @@ module.exports.passwordForgot = async(req, res)=>{
         res.status(400).json({message: "L'envoi a échoué"})
     }
     
+}
+
+module.exports.updateUser = async(req, res)=>{
+    try {
+        const userExist = await userModel.findOne({_id: req.userId})
+        if(!userExist) return res.status(400).json('Cet utilisateur est introuvable')
+
+        if(req.file){
+            fs.unlink(userExist.profilePic,  (err) => {
+                if (err) {
+                  console.error(err);
+                  throw new Error('Erreur lors de la suppression du fichier');
+                }
+            })
+
+            await userModel.findByIdAndUpdate(userExist, {profilePic: req.file.path})
+        }else{
+            await userModel.findByIdAndUpdate(userExist, req.body)
+        }
+
+        const user = await userModel.findOne({_id: req.userId})
+        res.json({user})
+    } catch (error) {
+        res.status(400).json({error})
+    }
 }
