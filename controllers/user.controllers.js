@@ -136,16 +136,31 @@ module.exports.updateUser = async(req, res)=>{
         if(req.file){
             fs.unlink(userExist.profilePic,  (err) => {
                 if (err) {
-                  console.error(err);
                   throw new Error('Erreur lors de la suppression du fichier');
                 }
             })
 
             await userModel.findByIdAndUpdate(userExist, {profilePic: req.file.path})
+        }
+
+        if (req.body.oldPassword) {
+            const passwordVerification = await bcrypt.compare(req.body.oldPassword, userExist.password)
+            if(!passwordVerification) return res.status(400).json("Mot de passe incorrect")
+
+            if(req.body.password !== req.body.passwordRepeat) return res.status(400).json('Les mots de passes doivent être les mêmes')
+
+            
+            const hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+            const passwordVerificationFinal = await bcrypt.compare(req.body.password, userExist.password)
+            if(passwordVerificationFinal) return res.status(400).json("Entrez un mot de passe pas encore utilisé")
+
+            await userModel.findByIdAndUpdate(userExist, {password: hashedPassword})
         }else{
             await userModel.findByIdAndUpdate(userExist, req.body)
         }
 
+        
         const user = await userModel.findOne({_id: req.userId})
         res.json({user})
     } catch (error) {

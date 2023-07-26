@@ -25,6 +25,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.use('/api/task', require('./routes/task.route'))
 app.use('/api/user', require('./routes/user.route'))
 app.use('/api/project', require('./routes/project.route'))
+app.use('/api/file', require('./routes/file.route'))
 app.use('/uploads', express.static('uploads'))
 
 app.listen(process.env.PORT,()=>{
