@@ -66,9 +66,8 @@ module.exports.deleteProject = async(req, res) =>{
 
     try {
         project.deleteOne()
-        const projects = await projectModel.find({userId: req.userId});
 
-        res.json({id, projects})
+        res.json({id})
     } catch (error) {
         res.status(400).json({error})
     }
