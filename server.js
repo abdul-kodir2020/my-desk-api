@@ -22,12 +22,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.send('File uploaded!');
 });
 
-app.use('/api/task', require('./routes/task.route'))
 app.use('/api/user', require('./routes/user.route'))
-app.use('/api/project', require('./routes/project.route'))
-app.use('/api/file', require('./routes/file.route'))
-app.use('/api/team', require('./routes/team.route'))
+app.use('/api/cv', require('./routes/cv.route'))
 app.use('/uploads', express.static('uploads'))
+
+app.get('/', (req,res)=>{
+  res.send('working')
+})
 
 app.listen(process.env.PORT,()=>{
     console.log("serveur démarré")
