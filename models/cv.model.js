@@ -6,6 +6,10 @@ const cvSchema = new Schema({
     type: String,
     required: true 
   },
+  title: {
+    type: String,
+    default: null
+  },
   email: {
     type: String,
     required: true 
@@ -13,7 +17,7 @@ const cvSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true 
+    default: null
   },
   address: { 
     type: String, 
@@ -66,6 +70,10 @@ const cvSchema = new Schema({
     },
   }],
   visible: {
+    type: Boolean,
+    default: false
+  },
+  completed: {
     type: Boolean,
     default: false
   },
