@@ -14,14 +14,14 @@ const schemaCV = joi.object(
     {
         name: joi.string().min(5).required().messages(customMessages),
         email: joi.string().email().min(7).required().messages(customMessages),
-        phone: joi.string().min(8).required().messages(customMessages)
+        phone: joi.string().min(8).messages(customMessages)
     }
 )
 
 module.exports.addCv = async (req, res) => {
     try {
         const cv = await CV.findOne({userId : req.userId})
-        if (!cv) return res.status(400).json({error : "Cet utilisateur possède déjà un cv"})
+        if (cv) return res.status(400).json({error : "Cet utilisateur possède déjà un cv"})
 
         const body = req.body
         
@@ -44,7 +44,7 @@ module.exports.addCv = async (req, res) => {
 
 module.exports.getCvs = async (req, res) => {
     try {
-        const cvs = await CV.find();
+        const cvs = await CV.find({visible: true});
         res.status(200).json({cvs});
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -56,6 +56,17 @@ module.exports.getCv = async (req, res) => {
     try {
         const cv = await CV.findById(req.params.id);
         if (!cv) return res.status(404).json({ error: "Ce cv n'existe pas" });
+
+        res.status(200).json({cv});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+module.exports.getCvByUserId = async (req, res) => {
+    try {
+        const cv = await CV.findOne({userId : req.userId});
+        if (!cv) return res.status(450).json({ error: "Cet Utilisateur n'a pas de cv" });
 
         res.status(200).json({cv});
     } catch (error) {
