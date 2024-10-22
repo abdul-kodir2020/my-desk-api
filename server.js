@@ -7,6 +7,8 @@ const dbConnect = require('./config/db')
 const multer = require('multer')
 dotenv.config()
 
+const axios = require('axios');
+
 dbConnect()
 
 //middlewares
@@ -28,6 +30,13 @@ app.use('/api/project', require('./routes/project.route'))
 app.use('/api/file', require('./routes/file.route'))
 app.use('/api/team', require('./routes/team.route'))
 app.use('/uploads', express.static('uploads'))
+
+setTimeout(async() => {
+    await axios('https://cv-maker-back.onrender.com/api/cvs')
+    .then((res) => console.log(res))
+    .catch(err => console.log(err)
+    );
+  }, 15000);
 
 app.listen(process.env.PORT,()=>{
     console.log("serveur démarré")
