@@ -36,7 +36,7 @@ setInterval(async() => {
     .then((res) => console.log("tes"))
     .catch(err => console.log(err)
     );
-  }, 15000);
+  }, 30000);
 
 app.listen(process.env.PORT,()=>{
     console.log("serveur démarré")
