@@ -33,7 +33,7 @@ app.use('/uploads', express.static('uploads'))
 
 setTimeout(async() => {
     await axios('https://cv-maker-back.onrender.com/api/cvs')
-    .then((res) => console.log(res))
+    .then((res) => console.log("tes"))
     .catch(err => console.log(err)
     );
   }, 15000);
